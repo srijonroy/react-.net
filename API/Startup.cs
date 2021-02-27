@@ -33,7 +33,8 @@ namespace API
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
             });
-            services.AddDbContext<DataContext>(options => {
+            services.AddDbContext<DataContext>(options =>
+            {
                 options.UseSqlite(_config.GetConnectionString("DefaultConnection"));
             });
         }
@@ -51,6 +52,13 @@ namespace API
             app.UseHttpsRedirection();
 
             app.UseRouting();
+            if (env.IsDevelopment())
+            {
+                app.UseCors(builder =>
+                {
+                    builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                });
+            }
 
             app.UseAuthorization();
 
