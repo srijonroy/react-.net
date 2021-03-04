@@ -10,6 +10,8 @@ interface Props {
 
 const ActivityListItem = ({ activity }: Props) => {
   // const { activityStore } = useStore();
+  const { date } = activity;
+  const transfrmedDate = date ? date.toISOString().split('T')[0] : null;
 
   return (
     <Segment.Group>
@@ -28,7 +30,7 @@ const ActivityListItem = ({ activity }: Props) => {
       </Segment>
       <Segment>
         <span>
-          <Icon name="clock" /> {activity.date}
+          <Icon name="clock" /> {transfrmedDate}
           <Icon name="marker" /> {activity.venue}
         </span>
       </Segment>

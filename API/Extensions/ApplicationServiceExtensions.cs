@@ -1,6 +1,7 @@
 using Application.Activities;
 using Application.Core;
 using AutoMapper;
+using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -14,7 +15,9 @@ namespace API.Extensions
     {
         public static void InstallServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddControllers().AddNewtonsoftJson();
+            services.AddControllers().AddNewtonsoftJson().AddFluentValidation(config => 
+                config.RegisterValidatorsFromAssemblyContaining<Create>()
+            );
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
