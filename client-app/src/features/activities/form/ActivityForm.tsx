@@ -1,21 +1,18 @@
-import React, { ChangeEvent, useState } from "react";
+import { observer } from "mobx-react-lite";
+import React, { ChangeEvent, useEffect, useState } from "react";
+import { Link, useHistory, useParams } from "react-router-dom";
 import { Button, Form, Segment } from "semantic-ui-react";
 import { Activity } from "../../../app/models/activity";
-
-interface Props {
-  closeForm: () => void;
-  activity: Activity | undefined;
-  createOrEdit: (activity: Activity) => void;
-}
+import { useStore } from "../../../app/stores/store";
 
 type Event = HTMLInputElement | HTMLTextAreaElement;
 
-const ActivityForm = ({
-  closeForm,
-  activity: selectedActivity,
-  createOrEdit,
-}: Props) => {
-  const initialState = selectedActivity ?? {
+const ActivityForm = () => {
+  const { activityStore } = useStore();
+  const { loading, loadActivity } = activityStore;
+  const history = useHistory();
+  const { id } = useParams<{ id: string }>();
+  const [activity, setActivity] = useState<Activity>({
     id: "",
     title: "",
     category: "",
@@ -23,19 +20,27 @@ const ActivityForm = ({
     date: "",
     city: "",
     venue: "",
-  };
+  });
 
-  const [activity, setActivity] = useState<Activity>(initialState);
+  useEffect(() => {
+    if (id) {
+      loadActivity(id).then((act) => setActivity(act!));
+    }
+  }, [id, loadActivity]);
 
   const handleSubmit = () => {
     console.log(activity);
-    createOrEdit(activity);
+    activity.id
+      ? activityStore.updateActivity(activity)
+      : activityStore.createActivity(activity);
+    history.push("/activities");
   };
 
   const handleOnChange = (e: ChangeEvent<Event>) => {
     const { name, value } = e.target;
     setActivity({ ...activity, [name]: value });
   };
+  // if (loadInitial) return <Loading content="Loading..."></Loading>;
 
   return (
     <Segment clearing>
@@ -62,6 +67,7 @@ const ActivityForm = ({
           onChange={handleOnChange}
         />
         <Form.Input
+          type="date"
           placeholder="Date"
           content={activity?.date}
           value={activity.date}
@@ -85,19 +91,21 @@ const ActivityForm = ({
         <Button
           floated="right"
           positive
-          type="submit"
+          type="button"
           content="Submit"
-          onClick={() => handleSubmit()}
+          loading={loading}
+          onClick={handleSubmit}
         />
         <Button
           floated="right"
           type="button"
           content="Cancel"
-          onClick={() => closeForm()}
+          as={Link}
+          to="/activities"
         />
       </Form>
     </Segment>
   );
 };
 
-export default ActivityForm;
+export default observer(ActivityForm);
