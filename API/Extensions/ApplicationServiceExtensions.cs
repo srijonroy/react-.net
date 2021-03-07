@@ -3,6 +3,8 @@ using Application.Core;
 using AutoMapper;
 using FluentValidation.AspNetCore;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,7 +17,10 @@ namespace API.Extensions
     {
         public static void InstallServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddControllers().AddNewtonsoftJson().AddFluentValidation(config => 
+            services.AddControllers(opt => {
+                var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+                opt.Filters.Add(new AuthorizeFilter(policy));
+            }).AddNewtonsoftJson().AddFluentValidation(config => 
                 config.RegisterValidatorsFromAssemblyContaining<Create>()
             );
             services.AddSwaggerGen(c =>
