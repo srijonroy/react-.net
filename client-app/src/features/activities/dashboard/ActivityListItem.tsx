@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Button, Icon, Item, Segment } from "semantic-ui-react";
 import { Activity } from "../../../app/models/activity";
 // import { useStore } from "../../../app/stores/store";
+import "./ActivityListItem.css";
 
 interface Props {
   activity: Activity;
@@ -11,7 +12,7 @@ interface Props {
 const ActivityListItem = ({ activity }: Props) => {
   // const { activityStore } = useStore();
   const { date } = activity;
-  const transfrmedDate = date ? date.toISOString().split('T')[0] : null;
+  const transfrmedDate = date ? date.toISOString().split("T")[0] : null;
 
   return (
     <Segment.Group>
@@ -35,7 +36,7 @@ const ActivityListItem = ({ activity }: Props) => {
         </span>
       </Segment>
       <Segment secondary>Attendees go here</Segment>
-      <Segment>
+      <Segment className="btn-seg">
         <span>{activity.description}</span>
         <Button
           as={Link}
