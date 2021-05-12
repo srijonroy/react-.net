@@ -8,11 +8,13 @@ import HomePage from "../../features/home/HomePage";
 import ActivityForm from "../../features/activities/form/ActivityForm";
 import ActivityDetails from "../../features/activities/details/ActivityDetails";
 import LoginForm from "../../features/users/LoginForm";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   const location = useLocation();
   return (
     <>
+      <ToastContainer position="top-right" />
       <Route path="/" exact component={HomePage}></Route>
       <Route
         path={"/(.+)"}
@@ -32,6 +34,7 @@ function App() {
                 path={["/createActivity", "/manage/:id"]}
                 component={ActivityForm}
               ></Route>
+              <Route path="/errors"></Route>
             </Container>
           </>
         )}
