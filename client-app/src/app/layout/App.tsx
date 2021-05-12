@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Container } from "semantic-ui-react";
 import ActivityDashboard from "../../features/activities/dashboard/ActivityDashboard";
 import NavBar from "./NavBar";
@@ -9,12 +9,28 @@ import ActivityForm from "../../features/activities/form/ActivityForm";
 import ActivityDetails from "../../features/activities/details/ActivityDetails";
 import LoginForm from "../../features/users/LoginForm";
 import { ToastContainer } from "react-toastify";
+import { useStore } from "../stores/store";
+import Loading from "./Loading";
+import ModalContainer from "../common/Modals/ModalContainer";
 
 function App() {
   const location = useLocation();
+  const { commonStore, userStore } = useStore();
+
+  useEffect(() => {
+    if (commonStore.token) {
+      userStore.getUser().finally(() => commonStore.setAppLoaded());
+    } else {
+      commonStore.setAppLoaded();
+    }
+  }, [commonStore, userStore]);
+
+  if (!commonStore.appLoaded) return <Loading content="Loading app.." />;
+
   return (
     <>
       <ToastContainer position="top-right" />
+      <ModalContainer />
       <Route path="/" exact component={HomePage}></Route>
       <Route
         path={"/(.+)"}

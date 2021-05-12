@@ -11,10 +11,11 @@ import {
 } from "semantic-ui-react";
 import { useStore } from "../../app/stores/store";
 import LoginForm from "../users/LoginForm";
+import RegisterForm from "../users/RegisterForm";
 // import RegisterForm from '../users/RegisterForm';
 
 export default observer(function HomePage() {
-  // const { userStore, modalStore } = useStore();
+  const { userStore, modalStore } = useStore();
   return (
     <Segment inverted textAlign="center" vertical className="masthead">
       <Container text>
@@ -27,12 +28,31 @@ export default observer(function HomePage() {
           />
           Reactivities
         </Header>
-        <>
-          <Header as="h2" inverted content="Welcome to Reactivities" />
-          <Button as={Link} to="/login" size="huge" inverted>
-            Login!
-          </Button>
-        </>
+        {userStore.isLoggedIn ? (
+          <>
+            <Header as="h2" inverted content="Welcome to Reactivities" />
+            <Button as={Link} to="/activities" size="huge" inverted>
+              Go To Activities!
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button
+              onClick={() => modalStore.openModal(<LoginForm />)}
+              size="huge"
+              inverted
+            >
+              Login!
+            </Button>
+            <Button
+              onClick={() => modalStore.openModal(<RegisterForm />)}
+              size="huge"
+              inverted
+            >
+              Register!
+            </Button>
+          </>
+        )}
       </Container>
     </Segment>
   );
