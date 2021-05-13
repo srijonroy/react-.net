@@ -1,5 +1,5 @@
 import { User, UserFormValues } from "./../models/user";
-import { Activity } from "./../models/activity";
+import { Activity, ActivityFormValues } from "./../models/activity";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { toast } from "react-toastify";
 import { store } from "../stores/store";
@@ -72,9 +72,12 @@ const requests = {
 const Activities = {
   list: () => requests.get<Activity[]>("/Activities"),
   details: (id: string) => requests.get<Activity>(`/Activities/${id}`),
-  create: (activity: Activity) => requests.post("/Activities", activity),
-  update: (activity: Activity) => requests.put("/Activities", activity),
+  create: (activity: ActivityFormValues) =>
+    requests.post("/Activities", activity),
+  update: (activity: ActivityFormValues) =>
+    requests.put("/Activities", activity),
   delete: (id: string) => requests.delete(`/Activities/${id}`),
+  attend: (id: string) => requests.post(`/Activities/${id}/attend`, {}),
 };
 
 const Account = {

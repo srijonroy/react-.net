@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import { Link, useHistory, useParams } from "react-router-dom";
 import { Button, Header, Segment } from "semantic-ui-react";
-import { Activity } from "../../../app/models/activity";
+import { ActivityFormValues } from "../../../app/models/activity";
 import { useStore } from "../../../app/stores/store";
 import * as Yup from "yup";
 import CustomInput from "../../../app/common/form/CustomInput";
@@ -14,18 +14,12 @@ import { categoryOptions } from "../../../app/common/options/categoryOptions";
 
 const ActivityForm = () => {
   const { activityStore } = useStore();
-  const { loading, loadActivity } = activityStore;
+  const { loadActivity } = activityStore;
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
-  const [activity, setActivity] = useState<Activity>({
-    id: "",
-    title: "",
-    category: "",
-    description: "",
-    date: new Date(),
-    city: "",
-    venue: "",
-  });
+  const [activity, setActivity] = useState<ActivityFormValues>(
+    new ActivityFormValues()
+  );
 
   const validationSchema = Yup.object({
     title: Yup.string().required("Please provide Title"),
@@ -38,11 +32,13 @@ const ActivityForm = () => {
 
   useEffect(() => {
     if (id) {
-      loadActivity(id).then((act) => setActivity(act!));
+      loadActivity(id).then((act) =>
+        setActivity(new ActivityFormValues(activity))
+      );
     }
-  }, [id, loadActivity]);
+  }, [id, activity, loadActivity]);
 
-  const handleFormSubmit = (activity: Activity) => {
+  const handleFormSubmit = (activity: ActivityFormValues) => {
     console.log(activity);
     activity.id
       ? activityStore.updateActivity(activity)
@@ -95,7 +91,7 @@ const ActivityForm = () => {
               positive
               type="submit"
               content="Submit"
-              loading={loading}
+              loading={isSubmitting}
             />
             <Button
               floated="right"
